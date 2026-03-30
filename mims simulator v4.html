@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMS Portal Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-mims-banner { background-color: #eff3f6; }
+        .text-mims-link { color: #0082c3; }
+    </style>
+</head>
+<body class="bg-white font-sans text-gray-600">
+
+    <header class="flex items-center p-4 border-b border-gray-200">
+        <div class="mr-4 text-[10px] font-bold text-center leading-tight flex flex-col items-center">
+            <div class="w-8 h-8 bg-red-600 rounded-b-full rounded-t-sm mb-1 flex items-center justify-center text-white text-xs">Logo</div>
+            Ministry of Education<br><span class="text-[8px] font-normal">SINGAPORE</span>
+        </div>
+        <h1 class="text-[22px] text-gray-500 font-normal ml-2 border-l border-gray-300 pl-4 py-1 tracking-wide">
+            MIMS Portal
+        </h1>
+    </header>
+
+    <div class="bg-mims-banner px-4 py-3 border-b border-gray-200 text-[15px] text-gray-600 leading-relaxed shadow-sm">
+        <p class="max-w-7xl mx-auto">
+            Please login using your MIMS account. For Students, your MIMS login ID is &lt;Full_Name&gt;@students.edu.sg. For School Staff, your MIMS login ID ends with @schools.gov.sg. For HQ Staff, your MIMS login ID ends with @hq.moe.gov.sg. If you encounter difficulties logging in, please approach your teachers (for Students) or MIMS Administrators (for Staff).
+        </p>
+    </div>
+
+    <main class="max-w-4xl mx-auto mt-12 p-4">
+        <div class="flex flex-col items-start md:ml-[35%]">
+            
+            <div class="flex items-center mb-3">
+                <input type="text" id="usernameInput" placeholder="Username" class="border border-gray-300 p-2 w-[280px] text-sm text-gray-700 focus:outline-none focus:border-blue-400 mr-2 placeholder-gray-500">
+                
+                <select id="domainSelect" class="border border-gray-300 p-2 text-sm text-gray-800 w-[170px] focus:outline-none focus:border-blue-400 mr-2 bg-white appearance-none cursor-pointer">
+                    <option value="">Select here</option>
+                    <option value="students">@students.edu.sg</option>
+                    <option value="schools" disabled>@schools.gov.sg</option>
+                    <option value="hq" disabled>@hq.moe.gov.sg</option>
+                </select>
+                
+                <span class="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full border border-gray-400 text-gray-500 text-[10px] font-serif cursor-help">i</span>
+            </div>
+
+            <div class="flex items-center mb-4 w-[280px]">
+                <input type="password" id="passwordInput" placeholder="Password" class="border border-gray-300 p-2 w-full text-sm text-gray-700 focus:outline-none focus:border-blue-400 placeholder-gray-500">
+            </div>
+
+            <div class="mb-4 w-[280px] flex gap-2">
+                <button type="button" id="signInBtn" class="bg-[#f8f9fa] border border-gray-300 text-gray-700 px-4 py-1.5 text-[13px] hover:bg-gray-200 transition-colors w-full">
+                    Sign in
+                </button>
+                <button type="button" id="resetBtn" class="bg-white border border-gray-300 text-gray-500 px-4 py-1.5 text-[13px] hover:bg-gray-100 transition-colors">
+                    Reset
+                </button>
+            </div>
+            
+            <div class="w-[280px] min-h-[40px] mb-2">
+                 <p id="signInFeedback" class="hidden text-sm text-center font-bold"></p>
+            </div>
+
+            <div class="w-[280px] text-center mt-2 flex flex-col items-center">
+                <a href="#" id="forgotPasswordLink" class="text-mims-link text-[15px] hover:underline">Forgot Password?</a>
+                <p id="handbookMessage" class="hidden text-red-600 font-semibold text-sm mt-3 bg-red-50 py-1 px-3 border border-red-200 rounded">
+                    Refer to page 6 in handbook (ICT matters)
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let countdownTimer;
+
+        // 1. Prevent hyphens from being typed
+        function blockHyphen(event) {
+            if (event.key === '-') {
+                event.preventDefault(); 
+            }
+        }
+
+        document.getElementById('usernameInput').addEventListener('keydown', blockHyphen);
+        document.getElementById('passwordInput').addEventListener('keydown', blockHyphen);
+
+        // 2. Forgot Password Interaction
+        document.getElementById('forgotPasswordLink').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            document.getElementById('handbookMessage').classList.remove('hidden');
+        });
+
+        // 3. Reset Function
+        function resetSimulator() {
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('domainSelect').value = '';
+            
+            const feedbackEl = document.getElementById('signInFeedback');
+            feedbackEl.textContent = '';
+            feedbackEl.className = "hidden"; 
+
+            document.getElementById('handbookMessage').classList.add('hidden');
+            
+            if(countdownTimer) clearInterval(countdownTimer);
+        }
+
+        // Attach reset function to Reset button
+        document.getElementById('resetBtn').addEventListener('click', resetSimulator);
+
+        // 4. Sign In Validation with Timer
+        document.getElementById('signInBtn').addEventListener('click', function() {
+            if(countdownTimer) clearInterval(countdownTimer);
+
+            const username = document.getElementById('usernameInput').value;
+            const domain = document.getElementById('domainSelect').value;
+            const feedbackEl = document.getElementById('signInFeedback');
+            
+            feedbackEl.className = "text-sm text-center font-bold mt-2 block"; 
+
+            if (username.includes('_') && domain === 'students') {
+                feedbackEl.classList.add("text-green-600"); 
+                
+                let timeLeft = 3;
+                feedbackEl.textContent = `Good job! Clearing in ${timeLeft}...`;
+                
+                countdownTimer = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        feedbackEl.textContent = `Good job! Clearing in ${timeLeft}...`;
+                    } else {
+                        clearInterval(countdownTimer);
+                        resetSimulator();
+                    }
+                }, 1000);
+
+            } else {
+                feedbackEl.textContent = "Almost there! Make sure you use an underscore (_) and select @students.edu.sg.";
+                feedbackEl.classList.add("text-red-500"); 
+            }
+        });
+    </script>
+</body>
+</html>
