@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMS Portal Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-mims-banner { background-color: #eff3f6; }
+        .text-mims-link { color: #0082c3; }
+    </style>
+</head>
+<body class="bg-white font-sans text-gray-600">
+
+    <header class="flex items-center p-4 border-b border-gray-200">
+        <div class="mr-4 flex flex-col items-center justify-center">
+            <div class="w-16 h-16 bg-blue-100 border-2 border-blue-400 rounded-full flex items-center justify-center text-center p-1 shadow-sm">
+                <span class="text-blue-700 font-bold text-[10px] leading-tight">MIMS<br>Simulator</span>
+            </div>
+        </div>
+        
+        <h1 class="text-[22px] text-gray-500 font-normal ml-2 border-l border-gray-300 pl-4 py-1 tracking-wide">
+            MIMS Portal
+        </h1>
+    </header>
+
+    <div class="bg-mims-banner px-4 py-3 border-b border-gray-200 text-[15px] text-gray-600 leading-relaxed shadow-sm">
+        <div class="max-w-7xl mx-auto">
+            <p class="mb-2">
+                Please login using your MIMS account. For Students, your MIMS login ID is &lt;Full_Name&gt;@students.edu.sg. For School Staff, your MIMS login ID ends with @schools.gov.sg. For HQ Staff, your MIMS login ID ends with @hq.moe.gov.sg. If you encounter difficulties logging in, please approach your teachers (for Students) or MIMS Administrators (for Staff).
+            </p>
+            <p class="font-semibold text-gray-700 italic border-t border-gray-300 pt-2 mt-2">
+                This is a simulator for students to practice, not the actual MIMS portal.
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto mt-12 p-4">
+        <div class="flex flex-col items-start md:ml-[35%]">
+            
+            <div class="flex items-center mb-3">
+                <input type="text" id="usernameInput" placeholder="Username" class="border border-gray-300 p-2 w-[280px] text-sm text-gray-700 focus:outline-none focus:border-blue-400 mr-2 placeholder-gray-500">
+                
+                <select id="domainSelect" class="border border-gray-300 p-2 text-sm text-gray-800 w-[170px] focus:outline-none focus:border-blue-400 mr-2 bg-white appearance-none cursor-pointer">
+                    <option value="">Select here</option>
+                    <option value="students">@students.edu.sg</option>
+                    <option value="schools" disabled>@schools.gov.sg</option>
+                    <option value="hq" disabled>@hq.moe.gov.sg</option>
+                </select>
+                
+                <span class="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full border border-gray-400 text-gray-500 text-[10px] font-serif cursor-help">i</span>
+            </div>
+
+            <div class="flex items-center mb-4 w-[280px]">
+                <input type="password" id="passwordInput" placeholder="Password" class="border border-gray-300 p-2 w-full text-sm text-gray-700 focus:outline-none focus:border-blue-400 placeholder-gray-500">
+            </div>
+
+            <div class="mb-4 w-[280px] flex gap-2">
+                <button type="button" id="signInBtn" class="bg-[#f8f9fa] border border-gray-300 text-gray-700 px-4 py-1.5 text-[13px] hover:bg-gray-200 transition-colors w-full">
+                    Sign in
+                </button>
+                <button type="button" id="resetBtn" class="bg-white border border-gray-300 text-gray-500 px-4 py-1.5 text-[13px] hover:bg-gray-100 transition-colors">
+                    Reset
+                </button>
+            </div>
+            
+            <div class="w-[280px] min-h-[50px] mb-2">
+                 <p id="signInFeedback" class="hidden text-sm text-center font-bold"></p>
+            </div>
+
+            <div class="w-[280px] text-center mt-2 flex flex-col items-center">
+                <a href="#" id="forgotPasswordLink" class="text-mims-link text-[15px] hover:underline">Forgot Password?</a>
+                <p id="handbookMessage" class="hidden text-red-600 font-semibold text-sm mt-3 bg-red-50 py-1 px-3 border border-red-200 rounded">
+                    Refer to page 6 in handbook (ICT matters)
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Block hyphens on keypress
+        function blockHyphen(event) {
+            if (event.key === '-') {
+                event.preventDefault(); 
+            }
+        }
+
+        document.getElementById('usernameInput').addEventListener('keydown', blockHyphen);
+        document.getElementById('passwordInput').addEventListener('keydown', blockHyphen);
+
+        // Forgot Password Link
+        document.getElementById('forgotPasswordLink').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            document.getElementById('handbookMessage').classList.remove('hidden');
+        });
+
+        // Reset Function
+        function resetSimulator() {
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('domainSelect').value = '';
+            
+            const feedbackEl = document.getElementById('signInFeedback');
+            feedbackEl.textContent = '';
+            feedbackEl.className = "hidden"; 
+
+            document.getElementById('handbookMessage').classList.add('hidden');
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', resetSimulator);
+
+        // Advanced Sign In Validation
+        document.getElementById('signInBtn').addEventListener('click', function() {
+            const username = document.getElementById('usernameInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const domain = document.getElementById('domainSelect').value;
+            const feedbackEl = document.getElementById('signInFeedback');
+            
+            feedbackEl.className = "text-sm text-center font-bold mt-2 block"; 
+
+            // 1. Detect and reject spaces
+            if (username.includes(' ') || password.includes(' ')) {
+                feedbackEl.textContent = "Spaces are not allowed";
+                feedbackEl.classList.add("text-red-600");
+                return; // Stop further checks
+            }
+
+            // 2. Ensure underscore is used in username
+            if (!username.includes('_')) {
+                feedbackEl.textContent = "Remember to use an underscore (_) in your username!";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            // 3. Ensure correct domain
+            if (domain !== 'students') {
+                feedbackEl.textContent = "Please select @students.edu.sg from the dropdown.";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            // 4. Check Password and Level
+            let advice = "";
+            let level = "";
+
+            if (password === 'MIMSp1.') {
+                level = "P1";
+                advice = "Always ask a teacher before clicking unknown links.";
+            } else if (password === 'MIMSp2.') {
+                level = "P2";
+                advice = "Keep your password secret and never share it!";
+            } else {
+                feedbackEl.textContent = "Almost there! Your password must be exactly MIMSp1. or MIMSp2.";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            // 5. Success State!
+            feedbackEl.classList.add("text-green-600"); 
+            feedbackEl.innerHTML = `Good job ${level}!<br><span class="text-blue-600 font-normal italic">${advice}</span><br><span class="text-gray-500 text-xs mt-1 block">(Click 'Reset' for the next student)</span>`;
+        });
+    </script>
+</body>
+</html>
