@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMS Portal Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-mims-banner { background-color: #eff3f6; }
+        .text-mims-link { color: #0082c3; }
+    </style>
+</head>
+<body class="bg-white font-sans text-gray-600 relative min-h-screen pb-16">
+
+    <header class="flex items-center p-4 border-b border-gray-200">
+        <div class="mr-4 flex flex-col items-center justify-center">
+            <div class="w-16 h-16 bg-blue-100 border-2 border-blue-400 rounded-full flex items-center justify-center text-center p-1 shadow-sm">
+                <span class="text-blue-700 font-bold text-[10px] leading-tight">MIMS<br>Simulator</span>
+            </div>
+        </div>
+        
+        <h1 class="text-[22px] text-gray-500 font-normal ml-2 border-l border-gray-300 pl-4 py-1 tracking-wide">
+            MIMS Portal
+        </h1>
+    </header>
+
+    <div class="bg-mims-banner px-4 py-3 border-b border-gray-200 text-[15px] text-gray-600 leading-relaxed shadow-sm">
+        <div class="max-w-7xl mx-auto">
+            <p class="font-semibold text-gray-700 italic mb-2">
+                This is a simulator for students to practice, not the actual MIMS portal.
+            </p>
+            <p>
+                Please login using your MIMS account. For Students, your MIMS login ID is &lt;Full_Name&gt;@students.edu.sg. 
+            </p>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto mt-12 p-4">
+        <div class="flex flex-col items-start md:ml-[35%]">
+            
+            <div class="flex items-center mb-3">
+                <input type="text" id="usernameInput" placeholder="Username" class="border border-gray-300 p-2 w-[280px] text-sm text-gray-700 focus:outline-none focus:border-blue-400 mr-2 placeholder-gray-500">
+                
+                <select id="domainSelect" class="border border-gray-300 p-2 text-sm text-gray-800 w-[170px] focus:outline-none focus:border-blue-400 bg-white appearance-none cursor-pointer">
+                    <option value="">Select here</option>
+                    <option value="students">@students.edu.sg</option>
+                    <option value="schools">@schools.gov.sg</option>
+                    <option value="hq">@hq.moe.gov.sg</option>
+                </select>
+            </div>
+
+            <div class="flex items-center mb-4 w-[280px] relative" title="Always check that you have entered the correct password before pressing enter!">
+                <input type="password" id="passwordInput" placeholder="Password" class="border border-gray-300 p-2 w-full text-sm text-gray-700 focus:outline-none focus:border-blue-400 placeholder-gray-500 pr-10">
+                <button type="button" id="togglePassword" class="absolute right-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mb-4 w-[280px]">
+                <button type="button" id="signInBtn" class="bg-[#f8f9fa] border border-gray-300 text-gray-700 px-4 py-1.5 text-[13px] hover:bg-gray-200 transition-colors w-full">
+                    Sign in
+                </button>
+            </div>
+            
+            <div class="w-[460px] min-h-[50px] mb-2">
+                 <p id="signInFeedback" class="hidden text-sm text-center font-bold"></p>
+            </div>
+
+            <div class="w-[280px] text-center mt-2 flex flex-col items-center">
+                <a href="#" id="forgotPasswordLink" class="text-mims-link text-[15px] hover:underline">Forgot Password?</a>
+                <p id="handbookMessage" class="hidden text-red-600 font-semibold text-sm mt-3 bg-red-50 py-1 px-3 border border-red-200 rounded">
+                    Refer to page 6 in handbook (ICT matters)
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="absolute bottom-6 left-6">
+        <button type="button" id="resetBtn" class="bg-white border border-gray-300 text-gray-500 px-6 py-2 text-sm hover:bg-gray-100 transition-colors shadow-sm rounded">
+            Reset Simulator
+        </button>
+    </div>
+
+    <div class="absolute bottom-2 w-full text-center text-xs text-gray-400">
+        Created by Ms Kaviya, Chongfu School &copy; 2026; supported by Gemini technology
+    </div>
+
+    <script>
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const domainSelect = document.getElementById('domainSelect');
+        const feedbackEl = document.getElementById('signInFeedback');
+
+        // Prevent hyphens
+        function blockHyphen(event) {
+            if (event.key === '-') {
+                event.preventDefault(); 
+            }
+        }
+        usernameInput.addEventListener('keydown', blockHyphen);
+        passwordInput.addEventListener('keydown', blockHyphen);
+
+        // Allow Enter key to trigger Sign In
+        function triggerSignInOnEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('signInBtn').click();
+            }
+        }
+        usernameInput.addEventListener('keydown', triggerSignInOnEnter);
+        passwordInput.addEventListener('keydown', triggerSignInOnEnter);
+
+        // Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                document.getElementById('eyeIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />';
+            } else {
+                passwordInput.type = 'password';
+                document.getElementById('eyeIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />';
+            }
+        });
+
+        // Real-time Space Warning
+        usernameInput.addEventListener('input', function() {
+            if (this.value.includes(' ')) {
+                feedbackEl.className = "text-sm text-center font-bold mt-2 block text-red-600";
+                feedbackEl.textContent = "Do note that there should be no spaces in the email address. Kindly replace any spaces with an underscore (_).";
+            } else {
+                feedbackEl.className = "hidden";
+            }
+        });
+
+        // Real-time Domain Warning
+        domainSelect.addEventListener('change', function() {
+            if (this.value === 'schools' || this.value === 'hq') {
+                feedbackEl.className = "text-sm text-center font-bold mt-2 block text-red-600";
+                feedbackEl.textContent = "This domain is meant for MOE staff. You should choose @students.edu.sg";
+            } else {
+                feedbackEl.className = "hidden";
+            }
+        });
+
+        // Forgot Password Link
+        document.getElementById('forgotPasswordLink').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            document.getElementById('handbookMessage').classList.remove('hidden');
+        });
+
+        // Reset Function
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            usernameInput.value = '';
+            passwordInput.value = '';
+            passwordInput.type = 'password'; // Reset to hidden
+            domainSelect.value = '';
+            feedbackEl.textContent = '';
+            feedbackEl.className = "hidden"; 
+            document.getElementById('handbookMessage').classList.add('hidden');
+        });
+
+        // Advanced Sign In Validation
+        document.getElementById('signInBtn').addEventListener('click', function() {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            const domain = domainSelect.value;
+            
+            feedbackEl.className = "text-sm text-center font-bold mt-2 block"; 
+
+            if (username.includes(' ') || password.includes(' ')) {
+                feedbackEl.textContent = "Do note that there should be no spaces in the email address. Kindly replace any spaces with an underscore (_).";
+                feedbackEl.classList.add("text-red-600");
+                return; 
+            }
+
+            if (!username.includes('_')) {
+                feedbackEl.textContent = "Remember to use an underscore (_) in your username!";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            if (domain === 'schools' || domain === 'hq') {
+                 feedbackEl.textContent = "This domain is meant for MOE staff. You should choose @students.edu.sg";
+                 feedbackEl.classList.add("text-red-600");
+                 return;
+            }
+
+            if (domain !== 'students') {
+                feedbackEl.textContent = "Please select @students.edu.sg from the dropdown.";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            let advice = "";
+            let level = "";
+
+            if (password === 'MIMSp1.') {
+                level = "P1";
+                advice = "Always ask a teacher before clicking unknown links.";
+            } else if (password === 'MIMSp2.') {
+                level = "P2";
+                advice = "Keep your password secret and never share it!";
+            } else {
+                feedbackEl.textContent = "Almost there! Your password must be exactly MIMSp1. or MIMSp2.";
+                feedbackEl.classList.add("text-red-500");
+                return;
+            }
+
+            feedbackEl.classList.add("text-green-600"); 
+            feedbackEl.innerHTML = `Good job ${level}!<br><span class="text-blue-600 font-normal italic">${advice}</span><br><span class="text-gray-500 text-xs mt-1 block">(Click 'Reset Simulator' for the next student)</span>`;
+        });
+    </script>
+</body>
+</html>
