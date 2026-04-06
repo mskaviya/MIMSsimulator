@@ -86,7 +86,7 @@
     </div>
 
     <div class="absolute bottom-2 w-full text-center text-xs text-gray-400">
-        Created by Ms Kaviya, Chongfu School &copy; 2026; supported by Gemini technology
+        Created by Miss Kaviya, Chongfu School, Supported by Gemini Technology
     </div>
 
     <script>
@@ -95,7 +95,7 @@
         const domainSelect = document.getElementById('domainSelect');
         const feedbackEl = document.getElementById('signInFeedback');
 
-        // Prevent hyphens
+        // prevent hyphens
         function blockHyphen(event) {
             if (event.key === '-') {
                 event.preventDefault(); 
@@ -104,7 +104,7 @@
         usernameInput.addEventListener('keydown', blockHyphen);
         passwordInput.addEventListener('keydown', blockHyphen);
 
-        // Allow Enter key to trigger Sign In
+        // allow enter key to trigger sign in
         function triggerSignInOnEnter(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -114,7 +114,7 @@
         usernameInput.addEventListener('keydown', triggerSignInOnEnter);
         passwordInput.addEventListener('keydown', triggerSignInOnEnter);
 
-        // Toggle Password Visibility
+        // toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
@@ -125,7 +125,7 @@
             }
         });
 
-        // Real-time Space Warning
+        // real-time space warning
         usernameInput.addEventListener('input', function() {
             if (this.value.includes(' ')) {
                 feedbackEl.className = "text-sm text-center font-bold mt-2 block text-red-600";
@@ -135,7 +135,7 @@
             }
         });
 
-        // Real-time Domain Warning
+        // real-time domain warning
         domainSelect.addEventListener('change', function() {
             if (this.value === 'schools' || this.value === 'hq') {
                 feedbackEl.className = "text-sm text-center font-bold mt-2 block text-red-600";
@@ -145,24 +145,24 @@
             }
         });
 
-        // Forgot Password Link
+        // forgot password link
         document.getElementById('forgotPasswordLink').addEventListener('click', function(event) {
             event.preventDefault(); 
             document.getElementById('handbookMessage').classList.remove('hidden');
         });
 
-        // Reset Function
+        // reset function
         document.getElementById('resetBtn').addEventListener('click', function() {
             usernameInput.value = '';
             passwordInput.value = '';
-            passwordInput.type = 'password'; // Reset to hidden
+            passwordInput.type = 'password'; // reset to hidden
             domainSelect.value = '';
             feedbackEl.textContent = '';
             feedbackEl.className = "hidden"; 
             document.getElementById('handbookMessage').classList.add('hidden');
         });
 
-        // Advanced Sign In Validation
+        // advanced sign in validation
         document.getElementById('signInBtn').addEventListener('click', function() {
             const username = usernameInput.value;
             const password = passwordInput.value;
@@ -204,7 +204,7 @@
                 level = "P2";
                 advice = "Keep your password secret and never share it!";
             } else {
-                feedbackEl.textContent = "Almost there! Your password must be exactly MIMSp1. or MIMSp2.";
+                feedbackEl.innerHTML = "Incorrect password.<br><span class='text-gray-600 font-normal italic mt-1 inline-block'>*Click on the reveal button to check your password*</span>";
                 feedbackEl.classList.add("text-red-500");
                 return;
             }
